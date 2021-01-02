@@ -10,13 +10,9 @@ Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
-# TODO: Add File Button
-# $addFileButton = New-Object System.Windows.Forms.Button
-# $addFileButton.Text = "Add File"
-# $addFileButton.Anchor = [System.Windows.Forms.AnchorStyles]::Top `
-# -bOR [System.Windows.Forms.AnchorStyles]::Left
-# $addFileButton.Dock = [System.Windows.Forms.DockStyle]::Top
+$ALGORITHMS = @("MD5", "SHA1", "SHA256")
 
+#Create File ListView
 $fileListView = New-Object System.Windows.Forms.ListView
 
 #Set Sytle of ListView
@@ -24,22 +20,32 @@ $fileListView.Anchor = [System.Windows.Forms.AnchorStyles]::Top -bor [System.Win
 $fileListView.Dock = [System.Windows.Forms.DockStyle]::Fill
 $fileListView.View = [System.Windows.Forms.View]::Details
 $fileListView.GridLines = $true
+$fileListView.MultiSelect = $true
 $fileListView.AutoResizeColumns([System.Windows.Forms.ColumnHeaderAutoResizeStyle]::HeaderSize);
 
 #Add column header
-$algorithms = @("MD5", "SHA1", "SHA256")
 $fileListView.Columns.Add("File", -2, [System.Windows.Forms.HorizontalAlignment]::Left)
-$algorithms | ForEach-Object {
+$ALGORITHMS | ForEach-Object {
     $fileListView.Columns.Add($_, -2, [System.Windows.Forms.HorizontalAlignment]::Left)
 }
 function hashFile ($filePath) {
-    return $algorithms | ForEach-Object {
+    return $ALGORITHMS | ForEach-Object {
         Get-FileHash $filePath -Algorithm $_ | Select-Object -ExpandProperty Hash
     }
 }
+function addFilesToListView ($filePaths) {
+    foreach ($filename in $filePaths)
+    {
+        $hashResults = hashFile($filename)
+        $listRow = New-Object -TypeName System.Windows.Forms.ListViewItem -ArgumentList $filename
+        $listRow.SubItems.AddRange($hashResults)
+        $fileListView.Items.Add($listRow)
+    }
+    $fileListView.AutoResizeColumns([System.Windows.Forms.ColumnHeaderAutoResizeStyle]::ColumnContent);
+}
 
 #Add drag-n-grop event handler
-$listBox_DragOver = [System.Windows.Forms.DragEventHandler]{
+$dragOverHandler = [System.Windows.Forms.DragEventHandler]{
     if ($_.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop)) # $_ = [System.Windows.Forms.DragEventArgs]
     {
         $_.Effect = 'Copy'
@@ -49,19 +55,29 @@ $listBox_DragOver = [System.Windows.Forms.DragEventHandler]{
         $_.Effect = 'None'
     }
 }
-$listBox_DragDrop = [System.Windows.Forms.DragEventHandler]{
-    foreach ($filename in $_.Data.GetData([Windows.Forms.DataFormats]::FileDrop)) # $_ = [System.Windows.Forms.DragEventArgs]
-    {
-        $hashResults = hashFile($filename)
-        $listRow = New-Object -TypeName System.Windows.Forms.ListViewItem -ArgumentList $filename
-        $listRow.SubItems.AddRange($hashResults)
-        $fileListView.Items.Add($listRow)
-    }
-    $fileListView.AutoResizeColumns([System.Windows.Forms.ColumnHeaderAutoResizeStyle]::ColumnContent);
+$dragDropHandler = [System.Windows.Forms.DragEventHandler]{
+    addFilesToListView($_.Data.GetData([Windows.Forms.DataFormats]::FileDrop))
 }
 $fileListView.AllowDrop = $true
-$fileListView.Add_DragOver($listBox_DragOver)
-$fileListView.Add_DragDrop($listBox_DragDrop)
+$fileListView.Add_DragOver($dragOverHandler)
+$fileListView.Add_DragDrop($dragDropHandler)
+
+#Create Add File Button
+$addFileButton = New-Object System.Windows.Forms.Button
+$addFileButton.Text = "Add File"
+$addFileButton.Anchor = [System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left
+$addFileButton.Dock = [System.Windows.Forms.DockStyle]::Top
+
+$addFileDialog = New-Object System.Windows.Forms.OpenFileDialog
+$addFileDialog.Multiselect = $true
+$addFileDialog.RestoreDirectory = $true
+$addFileButton.Add_Click({    
+    if ($addFileDialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+        addFilesToListView($addFileDialog.FileNames)
+    }
+})
+
+# TODO: Add a column selector (CheckedListBox)
 
 #Create Main Window
 $mainForm = New-Object system.Windows.Forms.Form
