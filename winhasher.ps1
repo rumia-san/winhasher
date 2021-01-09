@@ -37,6 +37,9 @@ function hashFile ($filePath) {
 function addFilesToListView ($filePaths) {
     foreach ($filename in $filePaths)
     {
+        if (-Not [System.IO.File]::Exists($filename)) {
+            continue
+        }
         $hashResults = hashFile($filename)
         $listRow = New-Object -TypeName System.Windows.Forms.ListViewItem -ArgumentList $filename
         $listRow.SubItems.AddRange($hashResults)
@@ -92,6 +95,11 @@ $mainForm.Controls.Add($addFileButton)
 #Hide the console window
 Add-Type -name user32 -member '[DllImport("user32.dll")] public static extern bool ShowWindow(int handle, int state);' -namespace Win32
 [Win32.user32]::ShowWindow(([System.Diagnostics.Process]::GetCurrentProcess() | Get-Process).MainWindowHandle, 0)
+
+#If command line arguments is not empty, add to list view
+if ($args) {
+    addFilesToListView($args)
+}
 
 #Show Main window
 $mainForm.ShowDialog()
