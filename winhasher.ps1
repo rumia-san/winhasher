@@ -19,6 +19,7 @@ $fileListView = New-Object System.Windows.Forms.ListView
 $fileListView.Anchor = [System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left
 $fileListView.Dock = [System.Windows.Forms.DockStyle]::Fill
 $fileListView.View = [System.Windows.Forms.View]::Details
+$fileListView.FullRowSelect = $true
 $fileListView.GridLines = $true
 $fileListView.MultiSelect = $true
 $fileListView.AutoResizeColumns([System.Windows.Forms.ColumnHeaderAutoResizeStyle]::HeaderSize);
@@ -87,4 +88,10 @@ $mainForm.StartPosition = 'CenterScreen'
 $mainForm.MinimumSize = '500,230'
 $mainForm.Controls.Add($fileListView)
 $mainForm.Controls.Add($addFileButton)
+
+#Hide the console window
+Add-Type -name user32 -member '[DllImport("user32.dll")] public static extern bool ShowWindow(int handle, int state);' -namespace Win32
+[Win32.user32]::ShowWindow(([System.Diagnostics.Process]::GetCurrentProcess() | Get-Process).MainWindowHandle, 0)
+
+#Show Main window
 $mainForm.ShowDialog()
