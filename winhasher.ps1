@@ -89,6 +89,12 @@ $mainForm.ClientSize = '500,230'
 $mainForm.text = "File Hasher"
 $mainForm.StartPosition = 'CenterScreen'
 $mainForm.MinimumSize = '500,230'
+$mainForm.Add_KeyDown({
+    if($_.KeyCode -eq "Escape") {
+        $mainForm.Close()
+    }
+})
+$mainForm.KeyPreview = $true
 $mainForm.Controls.Add($fileListView)
 $mainForm.Controls.Add($addFileButton)
 
