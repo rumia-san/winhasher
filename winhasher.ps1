@@ -3,7 +3,7 @@
  # Features:
  # 1. Simple File Hasher with GUI
  # 2. Written in Powershell without external modules
- # 3. You could simple drag and drop files to the window!
+ # 3. You could simply drag and drop files to the window!
  #>
 
 Add-Type -AssemblyName System.Windows.Forms
