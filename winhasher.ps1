@@ -66,6 +66,13 @@ $fileListView.AllowDrop = $true
 $fileListView.Add_DragOver($dragOverHandler)
 $fileListView.Add_DragDrop($dragDropHandler)
 
+#Add context menu to the file list view
+$contextMenuStrip = New-Object System.Windows.Forms.ContextMenuStrip
+$clearAllMenuItem = New-Object -TypeName System.Windows.Forms.ToolStripMenuItem `
+    -ArgumentList @('Clear All', $null, {$fileListView.Items.Clear()})
+$contextMenuStrip.Items.Add($clearAllMenuItem)
+$fileListView.ContextMenuStrip = $contextMenuStrip
+
 #Create Add File Button
 $addFileButton = New-Object System.Windows.Forms.Button
 $addFileButton.Text = "Add File"
@@ -81,7 +88,6 @@ $addFileButton.Add_Click({
     }
 })
 
-# TODO: Add a column selector (CheckedListBox)
 
 #Create Main Window
 $mainForm = New-Object system.Windows.Forms.Form
