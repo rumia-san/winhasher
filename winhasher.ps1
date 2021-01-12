@@ -68,9 +68,6 @@ $fileListView.Add_DragDrop($dragDropHandler)
 
 #Add context menu to the file list view
 $contextMenuStrip = New-Object System.Windows.Forms.ContextMenuStrip
-$clearAllMenuItem = New-Object -TypeName System.Windows.Forms.ToolStripMenuItem `
-    -ArgumentList @('Clear All', $null, {$fileListView.Items.Clear()})
-$contextMenuStrip.Items.Add($clearAllMenuItem)
 
 function copyHashValue ($algorithm) {
     $index = $ALGORITHMS.IndexOf($algorithm) + 1
@@ -92,6 +89,10 @@ $contextMenuStrip.Items.Add($copySHA1MenuItem)
 $copySHA256MenuItem = New-Object -TypeName System.Windows.Forms.ToolStripMenuItem `
     -ArgumentList @('Copy SHA256', $null, { copyHashValue('SHA256') })
 $contextMenuStrip.Items.Add($copySHA256MenuItem)
+
+$clearAllMenuItem = New-Object -TypeName System.Windows.Forms.ToolStripMenuItem `
+    -ArgumentList @('Clear All', $null, {$fileListView.Items.Clear()})
+$contextMenuStrip.Items.Add($clearAllMenuItem)
 
 $fileListView.ContextMenuStrip = $contextMenuStrip
 
