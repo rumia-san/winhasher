@@ -21,6 +21,7 @@ $fileListView.Dock = [System.Windows.Forms.DockStyle]::Fill
 $fileListView.View = [System.Windows.Forms.View]::Details
 $fileListView.FullRowSelect = $true
 $fileListView.GridLines = $true
+$fileListView.MultiSelect = $false
 $fileListView.AutoResizeColumns([System.Windows.Forms.ColumnHeaderAutoResizeStyle]::HeaderSize);
 
 #Add column header
@@ -73,7 +74,9 @@ $contextMenuStrip.Items.Add($clearAllMenuItem)
 
 function copyHashValue ($algorithm) {
     $index = $ALGORITHMS.IndexOf($algorithm) + 1
-    Set-Clipboard -Value $fileListView.SelectedItems[0].SubItems[$index].Text
+    if ($fileListView.SelectedItems) {
+        Set-Clipboard -Value $fileListView.SelectedItems[0].SubItems[$index].Text
+    }
 }
 <#
  # I tried to use a loop with lambda here, but the variable within the lambda will
