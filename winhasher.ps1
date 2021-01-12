@@ -21,7 +21,6 @@ $fileListView.Dock = [System.Windows.Forms.DockStyle]::Fill
 $fileListView.View = [System.Windows.Forms.View]::Details
 $fileListView.FullRowSelect = $true
 $fileListView.GridLines = $true
-$fileListView.MultiSelect = $true
 $fileListView.AutoResizeColumns([System.Windows.Forms.ColumnHeaderAutoResizeStyle]::HeaderSize);
 
 #Add column header
@@ -71,6 +70,26 @@ $contextMenuStrip = New-Object System.Windows.Forms.ContextMenuStrip
 $clearAllMenuItem = New-Object -TypeName System.Windows.Forms.ToolStripMenuItem `
     -ArgumentList @('Clear All', $null, {$fileListView.Items.Clear()})
 $contextMenuStrip.Items.Add($clearAllMenuItem)
+
+function copyHashValue ($algorithm) {
+    $index = $ALGORITHMS.IndexOf($algorithm) + 1
+    Set-Clipboard -Value $fileListView.SelectedItems[0].SubItems[$index].Text
+}
+<#
+ # I tried to use a loop with lambda here, but the variable within the lambda will
+ # be modified as the loop continues. I don't know how to "Capture by Value" (just 
+ # like C++ lambda [=]) in Powershell, so dirty workaround is used here...
+ #>
+$copyMD5MenuItem = New-Object -TypeName System.Windows.Forms.ToolStripMenuItem `
+    -ArgumentList @('Copy MD5', $null, { copyHashValue('MD5') })
+$contextMenuStrip.Items.Add($copyMD5MenuItem)
+$copySHA1MenuItem = New-Object -TypeName System.Windows.Forms.ToolStripMenuItem `
+    -ArgumentList @('Copy SHA1', $null, { copyHashValue('SHA1') })
+$contextMenuStrip.Items.Add($copySHA1MenuItem)
+$copySHA256MenuItem = New-Object -TypeName System.Windows.Forms.ToolStripMenuItem `
+    -ArgumentList @('Copy SHA256', $null, { copyHashValue('SHA256') })
+$contextMenuStrip.Items.Add($copySHA256MenuItem)
+
 $fileListView.ContextMenuStrip = $contextMenuStrip
 
 #Create Add File Button
