@@ -3,6 +3,8 @@ A simple file hasher with GUI, which supports drag and drop. Written in Powershe
 
 Written by [Rumia \<rumia-san@outlook.com\>](mailto:rumia-san@outlook.com)
 
+# Screenshot
+![screenshot](./screenshot.gif)
 
 # Features
 1. Simple File Hasher with GUI
