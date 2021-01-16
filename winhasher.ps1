@@ -115,7 +115,7 @@ $addFileButton.Add_Click({
 #Create Main Window
 $mainForm = New-Object system.Windows.Forms.Form
 $mainForm.ClientSize = '500,230'
-$mainForm.text = "File Hasher"
+$mainForm.text = "File Hasher (By Rumia)"
 $mainForm.StartPosition = 'CenterScreen'
 $mainForm.MinimumSize = '500,230'
 $mainForm.Add_KeyDown({
