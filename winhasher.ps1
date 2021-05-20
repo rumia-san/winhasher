@@ -4,6 +4,7 @@
  # 1. Simple File Hasher with GUI
  # 2. Written in Powershell without external modules
  # 3. You could simply drag and drop files to the window!
+ # 4. Simple keyboard bindings
  #>
 
 Add-Type -AssemblyName System.Windows.Forms
@@ -114,10 +115,13 @@ $addFileButton.Dock = [System.Windows.Forms.DockStyle]::Top
 $addFileDialog = New-Object System.Windows.Forms.OpenFileDialog
 $addFileDialog.Multiselect = $true
 $addFileDialog.RestoreDirectory = $true
-$addFileButton.Add_Click({    
+function showAddFileDialog {
     if ($addFileDialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
         addFilesToListView($addFileDialog.FileNames)
     }
+}
+$addFileButton.Add_Click({
+    showAddFileDialog
 })
 
 #Create Refresh Button
@@ -134,8 +138,12 @@ $mainForm.text = "File Hasher (By Rumia)"
 $mainForm.StartPosition = 'CenterScreen'
 $mainForm.MinimumSize = '500,230'
 $mainForm.Add_KeyDown({
-    if($_.KeyCode -eq "Escape") {
+    if ($_.KeyCode -eq [System.Windows.Forms.Keys]::Escape) {
         $mainForm.Close()
+    } elseif ($_.KeyCode -eq [System.Windows.Forms.Keys]::F5) {
+        refreshListView
+    } elseif ($_.control -and ($_.KeyCode -eq [System.Windows.Forms.Keys]::O) ) {
+        showAddFileDialog
     }
 })
 $mainForm.KeyPreview = $true

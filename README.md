@@ -20,4 +20,7 @@ Then you could drag and drop files to the window or click "Add File" button to a
 
 If the file has been modified outside, just click the "Refresh Hash Values" button to recalculate the hash values.
 
-Press ESC to exit this script.
+## Key Bindings
+* Press ESC to exit this script.
+* Press CTRL-O to open file.
+* Press F5 to refresh the hash values.
