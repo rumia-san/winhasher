@@ -48,6 +48,15 @@ function addFilesToListView ($filePaths) {
     $fileListView.AutoResizeColumns([System.Windows.Forms.ColumnHeaderAutoResizeStyle]::ColumnContent);
 }
 
+function refreshListView() {
+    $filePaths = New-Object System.Collections.Generic.List[string]
+    foreach ($item in $fileListView.Items) {
+        $filePaths.Add($item.SubItems[0].Text)
+    }
+    $fileListView.Items.Clear()
+    addFilesToListView($filePaths)
+}
+
 #Add drag-n-grop event handler
 $dragOverHandler = [System.Windows.Forms.DragEventHandler]{
     if ($_.Data.GetDataPresent([Windows.Forms.DataFormats]::FileDrop)) # $_ = [System.Windows.Forms.DragEventArgs]
@@ -111,6 +120,12 @@ $addFileButton.Add_Click({
     }
 })
 
+#Create Refresh Button
+$refreshButton = New-Object System.Windows.Forms.Button
+$refreshButton.Text = "Refresh Hash Values"
+$refreshButton.Anchor = [System.Windows.Forms.AnchorStyles]::Top -bor [System.Windows.Forms.AnchorStyles]::Left
+$refreshButton.Dock = [System.Windows.Forms.DockStyle]::Bottom
+$refreshButton.Add_Click({refreshListView})
 
 #Create Main Window
 $mainForm = New-Object system.Windows.Forms.Form
@@ -126,6 +141,7 @@ $mainForm.Add_KeyDown({
 $mainForm.KeyPreview = $true
 $mainForm.Controls.Add($fileListView)
 $mainForm.Controls.Add($addFileButton)
+$mainForm.Controls.Add($refreshButton)
 
 #Hide the console window
 Add-Type -name user32 -member '[DllImport("user32.dll")] public static extern bool ShowWindow(int handle, int state);' -namespace Win32

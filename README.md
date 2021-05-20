@@ -18,4 +18,6 @@ Command line arguments are supported as well. You could run `./winhasher.ps1 <fi
 
 Then you could drag and drop files to the window or click "Add File" button to add file.
 
+If the file has been modified outside, just click the "Refresh Hash Values" button to recalculate the hash values.
+
 Press ESC to exit this script.
